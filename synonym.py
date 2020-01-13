@@ -8,12 +8,14 @@
 
 """
 
-import multiprocessing as mp 
+#import multiprocessing as mp 
 import numpy as np 
 import networkx as nx 
 import pandas as pd 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from networkx.algorithms import components
+from GraphRicciCurvature.OllivierRicci import OllivierRicci
 
 
 PATH = "dataset_graphcomponent.csv"
@@ -53,10 +55,16 @@ def main() :
     W0, W1 = load(PATH)
     edges = map(tuple,np.array([W0, W1]).T)
     G = nx.Graph()
-    G.add_edges_from(edges[:1000])
-    sub_graphs = list(nx.connected_component_subgraphs(G))
+    G.add_edges_from(edges)
+    sub_graphs = list(nx.connected_components(G))
     
-    print len(sub_graphs)
+    print (len(sub_graphs))
+    orc = OllivierRicci(G, alpha=0.5, verbose="INFO")
+    orc.compute_ricci_curvature()
+    print("Karate Club Graph: The Ollivier-Ricci curvature of edge (0,1) is %f" % orc.G[0][1]["ricciCurvature"])
+
+
+    """
     pool = mp.Pool(mp.cpu_count())
     trgs= pool.map(ifcontainstrgs, sub_graphs)
     
@@ -84,6 +92,7 @@ def main() :
 
             
         plt.close()
+    """
     
 if __name__=="__main__" : 
     main()
