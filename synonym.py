@@ -53,16 +53,28 @@ def ifcontainstrgs(graph) :
 def main() : 
     
     W0, W1 = load(PATH)
-    edges = map(tuple,np.array([W0, W1]).T)
+    edges = list(map(tuple,np.array([W0, W1]).T))
     G = nx.Graph()
     G.add_edges_from(edges)
     sub_graphs = list(nx.connected_components(G))
     
     print (len(sub_graphs))
     orc = OllivierRicci(G, alpha=0.5, verbose="INFO")
-    orc.compute_ricci_curvature()
-    print("Karate Club Graph: The Ollivier-Ricci curvature of edge (0,1) is %f" % orc.G[0][1]["ricciCurvature"])
+    orc.compute_ricci_curvature() 
 
+    data = [] 
+    i = 0 
+
+    print('INFO: Computation of ricci curvature done....')
+    print ("Saving data....")
+    for edge in edges : 
+
+        data.append([edge[0], edge[1], orc.G[edge[0]][edge[1]]['ricciCurvature']])
+        i = i +1 
+        if i%1000==0 : 
+            print(i*100./len(edges), "%...")
+
+    pd.DataFrame(data, columns=['w0','w1','ricci']).to_csv("ricci.csv")
 
     """
     pool = mp.Pool(mp.cpu_count())
