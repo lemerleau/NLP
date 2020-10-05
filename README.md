@@ -1,2 +1,3 @@
-# Evolution of Words based on a synonym Data analysis
+# Evolution of Words
+English synonym data analysis.
  
